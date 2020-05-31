@@ -18,3 +18,9 @@ type Server struct {
 type Controller struct{}
 
 func (ctrl *Controller) List(w http.ResponseWriter, r *http.Request){}
+
+func (ctrl *Controller) GetOne(w http.ResponseWriter, r *http.Request){}
+
+func (ctrl *Controller) Create(w http.ResponseWriter, r *http.Request){}
+
+func (ctrl *Controller) Delete(w http.ResponseWriter, r *http.Request){}
