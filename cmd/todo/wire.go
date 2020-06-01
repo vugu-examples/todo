@@ -2,12 +2,20 @@
 
 package todo
 
-import "github.com/google/wire"
+import (
+	"github.com/google/wire"
+)
 
-func Wire() (*ToDoApp, error) {
+func Setup() (*App, error) {
 
 	wire.Build(
-
+		NewController,
+		NewDBConnStr,
+		NewDBDriverName,
 		NewRouter,
-		)
+		NewToDoApp,
+		//todo_item_store.NewToDoItemStore,
+	)
+
+	return &App{}, nil
 }

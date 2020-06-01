@@ -10,17 +10,21 @@ import (
 )
 
 type Server struct {
-	DB * sql.DB
+	DB     *sql.DB
 	Router *httprouter.Router
-	Store *todo_item_store.ToDoItemStore
+	Store  *todo_item_store.ToDoItemStore
 }
 
 type Controller struct{}
 
-func (ctrl *Controller) List(w http.ResponseWriter, r *http.Request){}
+func NewController() *Controller {
+	return &Controller{}
+}
 
-func (ctrl *Controller) GetOne(w http.ResponseWriter, r *http.Request){}
+func (ctrl *Controller) List(w http.ResponseWriter, r *http.Request) {}
 
-func (ctrl *Controller) Create(w http.ResponseWriter, r *http.Request){}
+func (ctrl *Controller) GetOne(w http.ResponseWriter, r *http.Request) {}
 
-func (ctrl *Controller) Delete(w http.ResponseWriter, r *http.Request){}
+func (ctrl *Controller) Create(w http.ResponseWriter, r *http.Request) {}
+
+func (ctrl *Controller) Delete(w http.ResponseWriter, r *http.Request) {}
