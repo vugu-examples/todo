@@ -5,12 +5,18 @@
 
 package todo
 
+import (
+	"github.com/vugu-examples/todo/cmd/todo/todo_item_store"
+)
+
 // Injectors from wire.go:
 
 func Setup() (*App, error) {
 	dbConnStr := NewDBConnStr()
 	dbDriverName := NewDBDriverName()
-	controller := NewController()
+	db := NewDBConn(dbConnStr, dbDriverName)
+	toDoItemStore := todo_item_store.NewToDoItemStore(db)
+	controller := NewController(toDoItemStore)
 	router := NewRouter(controller)
 	app, err := NewToDoApp(dbConnStr, dbDriverName, router)
 	if err != nil {

@@ -27,12 +27,7 @@ func (s *ToDoItemStore) Insert() *InsertStmt {
 
 func (s *ToDoItemStore) Select() *SelectStmt {
 	return &SelectStmt{
-		store:         s,
-		selectColumns: nil,
-		whereList:     nil,
-		err:           nil,
-		tx:            nil,
-		distinct:      false,
+		store: s,
 	}
 }
 
