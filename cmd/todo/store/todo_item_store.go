@@ -1,4 +1,4 @@
-package todo_item_store
+package store
 
 import (
 	"database/sql"

@@ -6,7 +6,8 @@
 package todo
 
 import (
-	"github.com/vugu-examples/todo/cmd/todo/todo_item_store"
+	"github.com/vugu-examples/todo/cmd/todo/ctrl/todo"
+	"github.com/vugu-examples/todo/cmd/todo/store"
 )
 
 // Injectors from wire.go:
@@ -15,9 +16,9 @@ func Setup() (*App, error) {
 	dbConnStr := NewDBConnStr()
 	dbDriverName := NewDBDriverName()
 	db := NewDBConn(dbConnStr, dbDriverName)
-	toDoItemStore := todo_item_store.NewToDoItemStore(db)
-	controller := NewController(toDoItemStore)
-	router := NewRouter(controller)
+	toDoItemStore := store.NewToDoItemStore(db)
+	ctrl := todo.NewCtrlToDo(toDoItemStore)
+	router := todo.NewRouter(ctrl)
 	app, err := NewToDoApp(dbConnStr, dbDriverName, router)
 	if err != nil {
 		return nil, err
