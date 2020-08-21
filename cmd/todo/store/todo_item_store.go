@@ -11,7 +11,7 @@ type ToDoItemStore struct {
 	FieldList []string
 }
 
-func NewToDoItemStore(db *sql.DB) *ToDoItemStore {
+func newToDoItemStore(db *sql.DB) *ToDoItemStore {
 	return &ToDoItemStore{
 		DB:        db,
 		Table:     "todo_items",
@@ -25,9 +25,10 @@ func (s *ToDoItemStore) Insert() *InsertStmt {
 	}
 }
 
-func (s *ToDoItemStore) Select() *SelectStmt {
+func (s *ToDoItemStore) Select(selectColumns ...string) *SelectStmt {
 	return &SelectStmt{
-		store: s,
+		store:         s,
+		selectColumns: selectColumns,
 	}
 }
 

@@ -5,19 +5,21 @@ import (
 	"io"
 	"mime"
 	"net/http"
+	"strconv"
 
+	"github.com/d0sbit/werr"
 	"github.com/julienschmidt/httprouter"
 
 	"github.com/vugu-examples/todo/cmd/todo/store"
 )
 
 type Ctrl struct {
-	Store *store.ToDoItemStore
+	Store *store.Store
 }
 
-func NewCtrlToDo(toDoStore *store.ToDoItemStore) *Ctrl {
+func NewCtrlToDo(store *store.Store) *Ctrl {
 	return &Ctrl{
-		Store: toDoStore,
+		Store: store,
 	}
 }
 
@@ -32,29 +34,52 @@ func NewRouter(ctrl *Ctrl) *httprouter.Router {
 
 }
 
+// todo: figure out what the verbs will actually be
+
 func (ctrl *Ctrl) List(w http.ResponseWriter, r *http.Request) {
+
+	_ = werr.WriteError(w, func() error {
+
+		params := httprouter.ParamsFromContext(r.Context())
+
+		limit, err := strconv.ParseInt(params.ByName("limit"), 10, 8)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+		}
+
+		objList, err := ctrl.Store.ToDoItem().Select("*").Limit(limit).GetCtx(r.Context())
+		if err != nil {
+			return werr.ErrorCodef(500, "error")
+		}
+
+		_ = objList
+
+		return nil
+
+	}())
 
 }
 
 func (ctrl *Ctrl) GetOne(w http.ResponseWriter, r *http.Request) {
 
-	params := httprouter.ParamsFromContext(r.Context())
+	_ = werr.WriteError(w, func() error {
 
-	id := params.ByName("id")
+		params := httprouter.ParamsFromContext(r.Context())
 
-	obj, err := ctrl.Store.Select().Where("id", id).GetOne()
-	if err != nil {
-		http.Error(w, "", 500)
-		return
-	}
+		id := params.ByName("id")
 
-	w.Header().Set("content-type", "application/json")
-	if err := json.NewEncoder(w).Encode(&obj); err != nil {
-		http.Error(w, err.Error(), 500)
-		return
-	}
+		obj, err := ctrl.Store.ToDoItem().Select().Where("id", id).GetOne()
+		if err != nil {
+			return werr.ErrorCodef(500, "error")
+		}
 
-	return
+		w.Header().Set("content-type", "application/json")
+		if err := json.NewEncoder(w).Encode(&obj); err != nil {
+			return werr.ErrorCodef(500, "internal server error")
+		}
+
+		return nil
+	}())
 
 }
 
@@ -89,7 +114,7 @@ func (ctrl *Ctrl) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = ctrl.Store.Insert().Object(&obj).ExecContext(r.Context())
+	_, err = ctrl.Store.ToDoItem().Insert().Object(&obj).ExecContext(r.Context())
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -119,7 +144,7 @@ func (ctrl *Ctrl) Delete(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
-	_, err = ctrl.Store.Delete().Record(&store.ToDoItem{
+	_, err = ctrl.Store.ToDoItem().Delete().Record(&store.ToDoItem{
 		ID: ToDoID,
 	}).ExecContext(r.Context())
 

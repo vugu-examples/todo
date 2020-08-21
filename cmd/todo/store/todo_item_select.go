@@ -1,6 +1,7 @@
 package store
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 )
@@ -12,6 +13,7 @@ type SelectStmt struct {
 	err           error
 	tx            *sql.Tx
 	distinct      bool
+	limit         int64
 }
 
 func (stmt *SelectStmt) Where(arg string, value interface{}) *SelectStmt {
@@ -26,6 +28,11 @@ func (stmt *SelectStmt) Where(arg string, value interface{}) *SelectStmt {
 
 	return stmt
 
+}
+
+func (stmt *SelectStmt) Limit(limit int64) *SelectStmt {
+	stmt.limit = limit
+	return stmt
 }
 
 func (stmt *SelectStmt) Tx(tx *sql.Tx) *SelectStmt {
@@ -110,5 +117,17 @@ func (stmt *SelectStmt) GetOne() (*ToDoItem, error) {
 	}
 
 	return &ret, nil
+
+}
+
+func (stmt *SelectStmt) Get() ([]ToDoItem, error) {
+
+	return nil, nil
+
+}
+
+func (stmt *SelectStmt) GetCtx(ctx context.Context) ([]ToDoItem, error) {
+
+	return nil, nil
 
 }
